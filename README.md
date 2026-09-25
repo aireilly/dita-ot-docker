@@ -1,3 +1,3 @@
 # Dockerfile for DITA-OT
 
-A Dockerfile for the [DITA OT](https://www.dita-ot.org/)
+A Dockerfile for the [DITA Open Toolkit](https://www.dita-ot.org/).
