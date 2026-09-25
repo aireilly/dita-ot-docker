@@ -1,6 +1,25 @@
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:17-jre AS builder
 
 ARG VERSION
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update -q && \
+    apt-get install -qy --no-install-recommends unzip curl && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN test -n "$VERSION" && \
+    curl -fSL --retry 5 --retry-delay 5 --connect-timeout 30 --max-time 900 \
+      -o /tmp/dita-ot.zip \
+      "https://github.com/dita-ot/dita-ot/releases/download/$VERSION/dita-ot-$VERSION.zip" && \
+    unzip -qq /tmp/dita-ot.zip -d /tmp/ && \
+    mkdir -p /opt/app && \
+    cd "/tmp/dita-ot-$VERSION" && \
+    mv bin config lib plugins build.xml integrator.xml /opt/app/ && \
+    chmod 755 /opt/app/bin/dita && \
+    /opt/app/bin/dita --install
+
+FROM eclipse-temurin:17-jre
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -15,27 +34,11 @@ LABEL "org.opencontainers.image.source"="https://github.com/dita-ot/dita-ot"
 
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update -q && \
-    apt-get install -qy --no-install-recommends unzip locales tzdata curl && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -qy --no-install-recommends locales tzdata && \
+    rm -rf /var/lib/apt/lists/* && \
+    useradd -ms /bin/bash dita-ot
 
-RUN test -n "$VERSION" && \
-    curl -fSL -o /tmp/dita-ot-$VERSION.zip \
-      "https://github.com/dita-ot/dita-ot/releases/download/$VERSION/dita-ot-$VERSION.zip" && \
-    unzip -qq /tmp/dita-ot-$VERSION.zip -d /tmp/ && \
-    rm /tmp/dita-ot-$VERSION.zip && \
-    mkdir -p /opt/app/ && \
-    mv /tmp/dita-ot-$VERSION/bin /opt/app/bin && \
-    chmod 755 /opt/app/bin/dita && \
-    mv /tmp/dita-ot-$VERSION/config /opt/app/config && \
-    mv /tmp/dita-ot-$VERSION/lib /opt/app/lib && \
-    mv /tmp/dita-ot-$VERSION/plugins /opt/app/plugins && \
-    mv /tmp/dita-ot-$VERSION/build.xml /opt/app/build.xml && \
-    mv /tmp/dita-ot-$VERSION/integrator.xml /opt/app/integrator.xml && \
-    rm -r /tmp/dita-ot-$VERSION && \
-    /opt/app/bin/dita --install
-
-RUN useradd -ms /bin/bash dita-ot && \
-    chown -R dita-ot:dita-ot /opt/app
+COPY --from=builder --chown=dita-ot:dita-ot /opt/app /opt/app
 
 USER dita-ot
 
