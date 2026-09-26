@@ -18,3 +18,5 @@ RUN if [ -z "$VERSION" ]; then echo "ERROR: VERSION build arg is not set" >&2; e
     mv bin config lib plugins build.xml integrator.xml /opt/app/ && \
     chmod 755 /opt/app/bin/dita && \
     /opt/app/bin/dita --install
+
+ENV PATH="/opt/app/bin:${PATH}"
