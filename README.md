@@ -5,5 +5,11 @@ A Dockerfile for the [DITA Open Toolkit](https://www.dita-ot.org/).
 The image adds DITA-OT's `bin` directory to `PATH`, so you can run `dita` directly:
 
 ```bash
-docker run --rm <image> dita --version
+podman run --rm <image> dita --version
+```
+
+Pull with Podman:
+
+```bash
+podman pull quay.io/rhn_support_aireilly/dita-ot
 ```
