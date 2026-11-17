@@ -4,14 +4,6 @@ A Dockerfile for the [DITA Open Toolkit](https://www.dita-ot.org/).
 
 The image adds DITA-OT's `bin` directory to `PATH`, so you can run `dita` directly:
 
-```bash
-podman run --rm <image> dita --version
-```
-
-## Running DITA-OT with dita-ot-docker
-
-The image has no `ENTRYPOINT` or `WORKDIR`, so you call `dita` yourself and mount your content folder into the container.
-
 ## Pull the prebuilt image
 
 ```bash
