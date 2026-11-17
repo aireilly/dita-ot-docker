@@ -31,8 +31,8 @@ podman run --rm \
   -v "$PWD":/src:Z \
   -w /src \
   quay.io/rhn_support_aireilly/dita-ot \
-  dita --input=/src/my-guide.ditamap --format=html5 --output=/src/out
+  dita --input=./example.ditamap --format=html5 --output=/src/out
 ```
 
-Swap `my-guide.ditamap` for your map file. Output lands in `./out` on your machine. The `:Z` suffix relabels the volume for SELinux (Fedora/RHEL); drop it on macOS or Ubuntu if it complains.
+Swap `example.ditamap` for your map file. Output lands in `./out` on your machine. The `:Z` suffix relabels the volume for SELinux (Fedora/RHEL); drop it on macOS or Ubuntu if it complains.
 
